@@ -82,7 +82,21 @@ public class Campo extends JPanel {
      */
     private void generaMine() {
         Random rand = new Random();
-        
+
+        int minePosizionate = 0;
+
+        // Continua a posizionare mine finché non raggiungiamo il numero massimo
+        while (minePosizionate < mine) {
+            int riga = rand.nextInt(campo.length); // Seleziona una riga casuale
+            int colonna = rand.nextInt(campo[0].length); // Seleziona una colonna casuale
+
+            // Se la cella non contiene già una mina, posiziona una
+            if (campo[riga][colonna].getContenuto() != MINA) {
+                campo[riga][colonna].setContenuto(MINA);
+                minePosizionate++;
+            }
+        }
+
     }
 
     /**
@@ -90,9 +104,35 @@ public class Campo extends JPanel {
      * numerici.
      */
     private void contaIndizi() {
+        int mineContato;
+        for (int r = 0; r < campo.length; r++) {
+            for (int c = 0; c < campo.length; c++) {
 
+                mineContato = 0;
+
+                // se e' una mina, la salto
+                if(campo[r][c].getContenuto() == MINA){
+                    continue; // salta le mine
+                }
+                
+                // scorro le adiacenti 3x3
+                for(int riga = r-1; riga <= r+1; riga++) {
+                    for(int col = c-1; col <= c+1; col++){
+                        // controllare la validita delle cella adiacenti 
+                        try {
+                          if(campo[riga][col].getContenuto() == MINA) {
+                              mineContato++;
+                          }
+                        }catch ( ArrayIndexOutOfBoundsException e){
+                              // cella non valida, salto
+                        } 
+                    }
+                    campo[r][c].setContenuto(mineContato);
+                }
+            }
+        }
     }
-
+    
     /**
      * Analizza e scopre le celle adiacenti se vuote
      *
@@ -100,7 +140,32 @@ public class Campo extends JPanel {
      * @param c colonna della cella di partenza
      */
     public void scoprieCella(int r, int c) {
+        // clausola di chiusura
+        
+        if (campo[r][c].isBandiera()) {
+            return; // cella non valida
+        }
+        campo[r][c].setVisible(true);
+        // caso base
+        Cella cella = campo[r][c];
+        if (cella.isScoperta() || cella.isBandiera()) {
+            return; // cella gia' scoperta o con bandiera
+        }
 
-        // va fatta ricorsiva
+        // chiamate ricoriva
+        if (cella.getContenuto() == 0) {
+            // scorro le adiacenti 3x3
+            for (int riga = r - 1; riga <= r + 1; riga++) {
+                for (int col = c - 1; col <= c + 1; col++) {
+                    // evito di riesaminare la cella corrente
+                    if (riga == r && col == c) {
+                        continue;
+                    }
+                    scoprieCella(riga, col);
+                }
+            }
+        }
+
+
     }
 }

@@ -6,7 +6,7 @@ public class App {
         JFrame f = new JFrame("Campo Minato");
         
         // creazione campo di gioco
-        
+
         
         
         // aggiunta del campo di gioco al frame

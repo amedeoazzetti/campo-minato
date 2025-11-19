@@ -1,6 +1,7 @@
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 
 public class Cella extends Canvas {
@@ -8,11 +9,11 @@ public class Cella extends Canvas {
     private int contenuto;
     private StatoCella stato;
     private final int MINA = -1;
-    private int r,c;
+    private int r, c;
 
     // Colori dei numeri
     private Color[] colori;
-    
+
     public Cella(int dim, int r, int c) {
         setSize(dim, dim);
         this.r = r;
@@ -20,14 +21,14 @@ public class Cella extends Canvas {
         this.contenuto = 0;
         this.stato = StatoCella.Coperta;
 
-        colori = new Color[] {
+        colori = new Color[]{
             Color.white,
             Color.blue,
-            new Color(70, 170, 70),   // green
+            new Color(70, 170, 70), // green
             Color.red,
-            new Color(0, 0, 128),     // dark blue
-            new Color(150, 50, 50),   // brown
-            new Color(50, 255, 200),  // aqua
+            new Color(0, 0, 128), // dark blue
+            new Color(150, 50, 50), // brown
+            new Color(50, 255, 200), // aqua
             Color.darkGray,
             Color.black
         };
@@ -36,48 +37,102 @@ public class Cella extends Canvas {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        
+
         // estendiamo il metodo
     }
-    
-    public int getContenuto(){
+
+    public int getContenuto() {
         return contenuto;
     }
 
-    public int getR(){
+    public int getR() {
         return r;
     }
 
-    public int getC(){
+    public int getC() {
         return c;
     }
 
-    public boolean isScoperta(){
+    public boolean isScoperta() {
         return stato == StatoCella.Scoperta;
     }
 
-    public boolean isBandiera(){
+    public boolean isBandiera() {
         return stato == StatoCella.Bandiera;
     }
 
-    public void setContenuto(int contenuto){
-        if(contenuto >= -1 && contenuto <= 8){
+    public void setContenuto(int contenuto) {
+        if (contenuto >= -1 && contenuto <= 8) {
             this.contenuto = contenuto;
         }
     }
 
-    public void toggleBandiera(){
-        if(stato == StatoCella.Coperta)
-            stato = StatoCella.Bandiera;
-        else
+    public void toggleBandiera() {
+        if (stato == StatoCella.Coperta) {
+            stato = StatoCella.Bandiera; 
+        }else {
             stato = StatoCella.Coperta;
+        }
         repaint();
     }
 
-    public void setVisible(boolean mostra){
-        if (mostra && stato == StatoCella.Coperta) 
+    public void setVisible(boolean mostra) {
+        if (mostra && stato == StatoCella.Coperta) {
             stato = StatoCella.Scoperta;
+        }
         repaint();
+
+    }
+
+    
+    @Override
+    public void paintAll(Graphics g) {
+        super.paint(g);
+
+        g.setFont(new Font("Consolas", Font.BOLD, 16));
+
+        switch (stato) {
+            case Coperta:
+                g.setColor(Color.orange);
+                g.fillRect(0, 0, getWidth(), getHeight());
+                break;
+
+            case Scoperta:
+                g.setColor(Color.lightGray);
+                g.fillRect(0, 0, getWidth(), getHeight());
+
+                // se c'e' una mina 
+                if (contenuto == MINA) {
+                    g.setColor(Color.RED);
+                    g.fillOval(0, 0, getWidth(), getHeight());
+                } else if (contenuto > 0) {
+                    g.setColor(colori[contenuto]);
+                    g.drawString(contenuto + "", getWidth() / 3, 2 * getHeight());
+
+                }
+                break;
+            case Bandiera:
+                // cella coperta 
+                g.setColor(Color.orange);
+                g.fillRect(0, 0, getWidth(), getHeight());
+
+                // bandiera 
+                g.setColor(Color.black);
+                g.fillRect(5, 5, getWidth() / 7, getHeight() - 5);
+
+                int [] xPoints = {getWidth()/3, getWidth()-5, getWidth()/3}; // Example x-coordinates
+                int [] yPoints = {5, 2 * getHeight()/5, 2*getHeight()/3}; // Example y-coordinates
+                g.setColor(Color.RED);
+                g.fillPolygon(xPoints, yPoints, 3);
+                break;
+
+                
+        }
+
+        g.setColor(Color.black);
+        g.drawRect(0, 0, getWidth()-1, getHeight()-1);
+        
+        
 
     }
 }
