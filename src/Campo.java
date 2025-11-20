@@ -168,14 +168,20 @@ public class Campo extends JPanel {
         // chiamata ricorsiva 
         for(int riga = r-1; riga <= r+1; riga++){
             for(int col = c-1; col <= c+1; col++){
+
+                // salto la cella attuale
+                if (riga == r && col == c)  {
+                    continue;
+                }
+
+                // controllo se le celle adiacenti sono coperte
                 try{
                     if(!campo[riga][col].isScoperta()){
                         scoprieCella(riga, col);
                     }
-                }catch(ArrayIndexOutOfBoundsException e) {/* salto la cella  */}
+                } 
+                catch(ArrayIndexOutOfBoundsException e) {/* salto la cella  */}
             }
         }
-
-
     }
 }
