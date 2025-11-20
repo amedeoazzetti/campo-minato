@@ -143,26 +143,36 @@ public class Campo extends JPanel {
         // clausola di chiusura
         
         if (campo[r][c].isBandiera()) {
-            return; // cella non valida
+            // cella non valida
+            return;
         }
         campo[r][c].setVisible(true);
+
         // caso base
         Cella cella = campo[r][c];
         if (cella.isScoperta() || cella.isBandiera()) {
             return; // cella gia' scoperta o con bandiera
         }
 
-        // chiamate ricoriva
-        if (cella.getContenuto() == 0) {
-            // scorro le adiacenti 3x3
-            for (int riga = r - 1; riga <= r + 1; riga++) {
-                for (int col = c - 1; col <= c + 1; col++) {
-                    // evito di riesaminare la cella corrente
-                    if (riga == r && col == c) {
-                        continue;
+        // controllo se ho perso
+        if (cella.getContenuto() ==MINA){
+            JOptionPane.showMessageDialog(null, "Game Over");
+            System.exit(0);
+        }
+
+        // clausola di chiusura 
+        if(cella .getContenuto() > 0) {
+            return;
+        }
+
+        // chiamata ricorsiva 
+        for(int riga = r-1; riga <= r+1; riga++){
+            for(int col = c-1; col <= c+1; col++){
+                try{
+                    if(!campo[riga][col].isScoperta()){
+                        scoprieCella(riga, col);
                     }
-                    scoprieCella(riga, col);
-                }
+                }catch(ArrayIndexOutOfBoundsException e) {/* salto la cella  */}
             }
         }
 
