@@ -46,6 +46,10 @@ public class Campo extends JPanel {
                             case MouseEvent.BUTTON1:
                                 // scopro la cella(...)
                                 scoprieCella(cliccata.getR(), cliccata.getC());
+                                if (checkVittoria()) {
+                                    JOptionPane.showMessageDialog(null, "Hai vinto!");
+                                    return;
+                                }
                                 break;
                             case MouseEvent.BUTTON3:
                                 if (cliccata.isScoperta()) {
@@ -106,7 +110,7 @@ public class Campo extends JPanel {
     private void contaIndizi() {
         int mineContato;
         for (int r = 0; r < campo.length; r++) {
-            for (int c = 0; c < campo.length; c++) {
+            for (int c = 0; c < campo[0].length; c++) {
 
                 mineContato = 0;
 
@@ -127,8 +131,9 @@ public class Campo extends JPanel {
                               // cella non valida, salto
                         } 
                     }
-                    campo[r][c].setContenuto(mineContato);
                 }
+                // imposta il conteggio calcolato per la cella corrente
+                campo[r][c].setContenuto(mineContato);
             }
         }
     }
@@ -183,5 +188,18 @@ public class Campo extends JPanel {
                 catch(ArrayIndexOutOfBoundsException e) {/* salto la cella  */}
             }
         }
+    }
+    private boolean checkVittoria(){
+        boolean win = true;
+        ciclo:
+        for(int r = 0; r < campo.length; r++){
+            for(int c = 0; c < campo[0].length; c++){
+                if(campo[r][c].getContenuto() != MINA && !campo[r][c].isScoperta()) {
+                    win = false;
+                    break ciclo;
+                }
+            }
+        }
+        return win;
     }
 }
