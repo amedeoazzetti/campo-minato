@@ -1,34 +1,33 @@
-
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 
 public class Cella extends Canvas {
-
-    private int contenuto;
+    
     private StatoCella stato;
+    private int contenuto;
     private final int MINA = -1;
-    private int r, c;
+    private int r, c; // indici riga e colonna
 
-    // Colori dei numeri
     private Color[] colori;
 
     public Cella(int dim, int r, int c) {
-        setSize(dim, dim);
+
+        setSize(dim, dim); // dimensione componente
         this.r = r;
         this.c = c;
         this.contenuto = 0;
-        this.stato = StatoCella.Coperta;
-
-        colori = new Color[]{
+        this.stato = StatoCella.Coperto;
+        // colori
+        colori = new Color[] {
             Color.white,
             Color.blue,
-            new Color(70, 170, 70), // green
+            new Color(70, 170, 70),   // green
             Color.red,
-            new Color(0, 0, 128), // dark blue
-            new Color(150, 50, 50), // brown
-            new Color(50, 255, 200), // aqua
+            new Color(0, 0, 128),     // dark blue
+            new Color(150, 50, 50),   // brown
+            new Color(50, 255, 200),  // aqua
             Color.darkGray,
             Color.black
         };
@@ -38,19 +37,42 @@ public class Cella extends Canvas {
     public void paint(Graphics g) {
         super.paint(g);
 
-        // estendiamo il metodo
-    }
+        g.setFont(new Font("Consolas", Font.BOLD, 16));
 
-    public int getContenuto() {
-        return contenuto;
-    }
+        switch (stato) {
+            case Coperto:
+                g.setColor(Color.orange);
+                g.fillRect(0, 0, getWidth(), getHeight());
+                break;
+            case Scoperta:
+                g.setColor(Color.green);
+                g.fillRect(0, 0, getWidth(), getHeight());
+                // se c'è una mina la disegniamo
+                if (contenuto == MINA) {
+                    g.setColor(Color.red);
+                    g.fillOval(0, 0, getWidth(), getHeight());
+                } else if (contenuto > 0) {
+                    g.setColor(colori[contenuto]);
+                    g.drawString(contenuto + "", getWidth() / 3, 2 * getHeight()/ 3);
+                }
 
-    public int getR() {
-        return r;
-    }
+                break;
+            case Bandiera:
+                g.setColor(Color.orange);
+                g.fillRect(0, 0, getWidth(), getHeight());
 
-    public int getC() {
-        return c;
+                g.setColor(Color.black);
+                g.fillRect(5, 5, getWidth() / 7, getHeight() - 5);
+                g.setColor(Color.red);
+
+                int xPoints[] = {getWidth() / 3, getWidth() - 5, getWidth()/3};
+                int yPoints[] = {5, 2*getHeight()/5, 2*getHeight()/3};
+                g.fillPolygon(xPoints, yPoints, 3);
+                break;
+        }
+
+        g.setColor(Color.black);
+        g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
     }
 
     public boolean isScoperta() {
@@ -61,78 +83,36 @@ public class Cella extends Canvas {
         return stato == StatoCella.Bandiera;
     }
 
-    public void setContenuto(int contenuto) {
-        if (contenuto >= -1 && contenuto <= 8) {
-            this.contenuto = contenuto;
-        }
+    public int getContenuto() {
+        return contenuto;
     }
 
+    public void setContenuto(int contenuto) {
+        if (contenuto >= -1 && contenuto <= 8)
+            this.contenuto = contenuto;
+    }
+
+    public int getR() {
+        return r;
+    }
+
+    public int getC() {
+        return c;
+    }
+    
     public void toggleBandiera() {
-        if (stato == StatoCella.Coperta) {
-            stato = StatoCella.Bandiera; 
-        }else {
-            stato = StatoCella.Coperta;
+        if (stato == StatoCella.Coperto) {
+            stato = StatoCella.Bandiera;
+        } else {
+            stato = StatoCella.Coperto;
         }
         repaint();
     }
 
     public void setVisible(boolean mostra) {
-        if (mostra && stato == StatoCella.Coperta) {
+        if (mostra && stato == StatoCella.Coperto) {
             stato = StatoCella.Scoperta;
         }
         repaint();
-
-    }
-
-    
-    @Override
-    public void paintAll(Graphics g) {
-        super.paint(g);
-
-        g.setFont(new Font("Consolas", Font.BOLD, 16));
-
-        switch (stato) {
-            case Coperta:
-                g.setColor(Color.orange);
-                g.fillRect(0, 0, getWidth(), getHeight());
-                break;
-
-            case Scoperta:
-                g.setColor(Color.lightGray);
-                g.fillRect(0, 0, getWidth(), getHeight());
-
-                // se c'e' una mina 
-                if (contenuto == MINA) {
-                    g.setColor(Color.RED);
-                    g.fillOval(0, 0, getWidth(), getHeight());
-                } else if (contenuto > 0) {
-                    g.setColor(colori[contenuto]);
-                    g.drawString(contenuto + "", getWidth() / 3, 2 * getHeight());
-
-                }
-                break;
-            case Bandiera:
-                // cella coperta 
-                g.setColor(Color.orange);
-                g.fillRect(0, 0, getWidth(), getHeight());
-
-                // bandiera 
-                g.setColor(Color.black);
-                g.fillRect(5, 5, getWidth() / 7, getHeight() - 5);
-
-                int [] xPoints = {getWidth()/3, getWidth()-5, getWidth()/3}; // Example x-coordinates
-                int [] yPoints = {5, 2 * getHeight()/5, 2*getHeight()/3}; // Example y-coordinates
-                g.setColor(Color.RED);
-                g.fillPolygon(xPoints, yPoints, 3);
-                break;
-
-                
-        }
-
-        g.setColor(Color.black);
-        g.drawRect(0, 0, getWidth()-1, getHeight()-1);
-        
-        
-
     }
 }

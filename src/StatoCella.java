@@ -1,3 +1,3 @@
 public enum StatoCella {
-    Coperta, Scoperta, Bandiera;
+    Coperto, Scoperta, Bandiera
 }
